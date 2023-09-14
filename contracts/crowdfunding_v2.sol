@@ -162,6 +162,23 @@ contract CrowdFunding {
 
     //Funciones implementadas para la actividad
 
+    //  enum EstadoPeticion {Abierta,Aprobada, Rechazada}
+    // struct PeticionGasto {
+    //     string detallePeticion;
+    //     EstadoPeticion estado;
+    //     uint importe;
+    //     address payable walletDestinatario;
+    //     uint votosRealizados;
+    //     uint votosPositivos;
+    //     mapping(address => bool) votantes;
+    // }
+
+    //PeticionGasto[] public peticionesDeGasto;
+    // mapping (uint => PeticionGasto) public peticionesDeGasto;
+    // uint totalPeticionesDeGasto;
+    // event NuevaPeticionGasto(uint ID, uint fechacreacion);
+    // event ResolucionPeticionGasto(uint ID, bool resolucion);
+
     function votarPeticionGasto(uint IDpeticion, bool aprobar) public {
 
         require(peticionesDeGasto[IDpeticion].estado == EstadoPeticion.Abierta, "Peticion ya cerrada.");
@@ -180,6 +197,7 @@ contract CrowdFunding {
             if (peticionesDeGasto[index].votosRealizados/2 < peticionesDeGasto[index].votosPositivos) {
 
                 peticionesDeGasto[index].estado = EstadoPeticion.Aprobada;
+                peticionesDeGasto[index].walletDestinatario.transfer(peticionesDeGasto[index].importe);
                 emit ResolucionPeticionGasto(index, true);
 
             } else {
@@ -189,7 +207,7 @@ contract CrowdFunding {
 
             }
         }  else {
-            
+
             peticionesDeGasto[index].estado = EstadoPeticion.Rechazada;
             emit ResolucionPeticionGasto(index, false);
         }
